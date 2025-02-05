@@ -1,0 +1,59 @@
+{% extends "base.njk" %}
+
+{% block titulo %}Lista de Pacientes{% endblock %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <!-- Título y barra de búsqueda -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Lista de Pacientes</h1>
+        <form action="/patients/find" method="get" class="d-flex">
+            <input type="text" name="surname" class="form-control me-2" placeholder="Buscar por apellido">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+    </div>
+
+    <!-- Botón para registrar un nuevo paciente -->
+    <a href="/patients/new" class="btn btn-success mb-3">Nuevo Paciente</a>
+
+    <!-- Tabla de pacientes -->
+    <table class="table table-striped">
+        {% if error %}
+<div class="alert alert-danger mt-3">
+    {{ error }}
+</div>
+{% endif %}
+
+
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for patient in patients %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ patient.name }}</td>
+                <td>
+                    <a href="/patients/{{ patient._id }}" class="btn btn-info btn-sm">Detalles</a>
+                    <a href="/patients/{{ patient._id }}/edit" class="btn btn-warning btn-sm">Editar</a>
+                    <form action="/patients/{{ patient._id }}?_method=DELETE" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Mensaje si no hay pacientes -->
+    {% if patients|length == 0 %}
+    <div class="alert alert-info mt-3">
+        No se encontraron pacientes registrados.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

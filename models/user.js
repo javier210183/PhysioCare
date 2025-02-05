@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 // Esquema de usuario
 const UserSchema = new mongoose.Schema({
@@ -15,9 +15,16 @@ const UserSchema = new mongoose.Schema({
     rol: {
         type: String,
         required: true,
-        enum: ['admin', 'physio', 'patient'] // Solo estos roles son válidos
+        enum: ['admin', 'physio', 'patient'], // Solo estos roles son válidos
+        validate: {
+            validator: function(v) {
+                console.log('Rol recibido para validación:', v);
+                return ['admin', 'physio', 'patient'].includes(v);
+            },
+            message: props => `${props.value} no es un rol válido`
+        }
     }
 });
 
 // Exportar el modelo
-module.exports = mongoose.model('User', UserSchema);
+export default mongoose.model('user', UserSchema);

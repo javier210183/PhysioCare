@@ -1,0 +1,26 @@
+{% extends "base.njk" %}
+
+{% block titulo %}Inicio{% endblock %}
+
+{% block contenido %}
+<div class="jumbotron text-center mt-5">
+    <h1 class="display-4">Bienvenido a PhysioCare</h1>
+    <p class="lead">Tu sistema de gestión para clínicas de fisioterapia.</p>
+
+    {% if session.user %}
+        <p>Usuario: {{ session.user.login }}</p>
+        <a href="/patients" class="btn btn-primary">Gestionar Pacientes</a>
+        {% if session.user.rol == 'admin' %}
+            <a href="/physios" class="btn btn-secondary">Gestionar Fisioterapeutas</a>
+            <a href="/records" class="btn btn-success">Gestionar Expedientes Médicos</a>
+        {% elif session.user.rol == 'physio' %}
+            <a href="/records" class="btn btn-success">Gestionar Expedientes Médicos</a>
+        {% elif session.user.rol == 'patient' %}
+            <a href="/patients/{{ session.user.id }}" class="btn btn-primary">Mis Datos</a>
+        {% endif %}
+    {% else %}
+        <p>Inicia sesión para gestionar la clínica.</p>
+        <a href="/auth/login" class="btn btn-primary">Iniciar Sesión</a>
+    {% endif %}
+</div>
+{% endblock %}

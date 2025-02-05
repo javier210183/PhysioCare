@@ -1,0 +1,48 @@
+{% extends "base.njk" %}
+
+{% block titulo %}Lista de Fisioterapeutas{% endblock %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Lista de Fisioterapeutas</h1>
+        <!-- Botón para registrar un nuevo fisioterapeuta -->
+        <a href="/physios/new" class="btn btn-success">Nuevo Fisioterapeuta</a>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Especialidad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for physio in physios %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ physio.name }}</td>
+                <td>{{ physio.surname }}</td>
+                <td>{{ physio.specialty }}</td>
+                <td>
+                    <a href="/physios/{{ physio._id }}" class="btn btn-info btn-sm">Detalles</a>
+                    <a href="/physios/{{ physio._id }}/edit" class="btn btn-warning btn-sm">Editar</a>
+                    <form action="/physios/{{ physio._id }}?_method=DELETE" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="text-center">No hay fisioterapeutas registrados.</td>
+            </tr>
+            {% endfor %}
+ 
+
+        </tbody>
+    </table>
+</div>
+{% endblock %}

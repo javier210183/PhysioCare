@@ -1,0 +1,71 @@
+{% extends "base.njk" %}
+
+{% block titulo %}Detalles del Paciente{% endblock %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <h1 class="mb-4">Detalles del Paciente</h1>
+    <table class="table table-bordered">
+        <tr>
+            <th>Nombre</th>
+            <td>{{ patient.name }}</td>
+        </tr>
+        <tr>
+            <th>Apellido</th>
+            <td>{{ patient.surname }}</td>
+        </tr>
+        <tr>
+            <th>Fecha de Nacimiento</th>
+            <td>{{ patient.birthDate | date('dd/MM/yyyy') }}</td>
+        </tr>
+        <tr>
+            <th>Dirección</th>
+            <td>{{ patient.address }}</td>
+        </tr>
+        <tr>
+            <th>Número de Seguro</th>
+            <td>{{ patient.insuranceNumber }}</td>
+        </tr>
+    </table>
+
+    {% if record %}
+    <h2 class="mt-4">Expediente Médico</h2>
+    <p><strong>Descripción:</strong> {{ record.medicalRecord }}</p>
+
+    <h3>Citas médicas</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Fisioterapeuta</th>
+                <th>Diagnóstico</th>
+                <th>Tratamiento</th>
+                <th>Observaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in record.appointments %}
+            <tr>
+                <td>{{ appointment.date | date("dd/MM/yyyy") }}</td>
+                <td>{{ appointment.physio }}</td>
+                <td>{{ appointment.diagnosis }}</td>
+                <td>{{ appointment.treatment }}</td>
+                <td>{{ appointment.observations }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="/patients" class="btn btn-primary">Volver a la Lista</a>
+
+        {% if session.user.rol == 'admin' %}
+            <a href="/patients/{{ patient._id }}/edit" class="btn btn-warning">Editar Paciente</a>
+            <form action="/patients/{{ patient._id }}/delete" method="POST" class="d-inline">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este paciente?')">Eliminar Paciente</button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

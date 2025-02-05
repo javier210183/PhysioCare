@@ -1,0 +1,82 @@
+{% extends "base.njk" %}
+
+{% block titulo %}Detalles del Expediente{% endblock %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <h1 class="mb-4">Detalles del Expediente</h1>
+
+    <!-- Información del expediente -->
+    <table class="table table-bordered">
+        <tr>
+            <th>Paciente</th>
+            <td>{{ record.patient.name }} {{ record.patient.surname }}</td>
+        </tr>
+        <tr>
+            <th>Fecha de Creación</th>
+            <td>
+                {% if record.date %}
+                    {{ record.date | date('dd/MM/yyyy') }}
+                {% else %}
+                    Fecha no disponible
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Notas</th>
+            <td>{{ record.notes }}</td>
+        </tr>
+    </table>
+
+    <!-- Listado de citas -->
+    <h2 class="mt-4">Citas</h2>
+    {% if record.appointments.length > 0 %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Fisioterapeuta</th>
+                <th>Diagnóstico</th>
+                <th>Tratamiento</th>
+                <th>Observaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in record.appointments %}
+            <tr>
+                <td>
+                    {% if appointment.date %}
+                        {{ appointment.date | date('dd/MM/yyyy') }}
+                    {% else %}
+                        Fecha no disponible
+                    {% endif %}
+                </td>
+                <td>{{ appointment.physio.name }} {{ appointment.physio.surname }}</td>
+                <td>{{ appointment.diagnosis }}</td>
+                <td>{{ appointment.treatment }}</td>
+                <td>{{ appointment.observations }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No hay citas registradas para este expediente.</p>
+    {% endif %}
+    
+{% if session.user.rol == 'admin' %}
+    <h3>Añadir Nota al Expediente</h3>
+    <form action="/records/{{ record._id }}/add-note" method="post">
+        <div class="mb-3">
+            <textarea name="content" class="form-control" rows="3" placeholder="Escribe una nota..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Añadir Nota</button>
+    </form>
+{% endif %}
+
+    <!-- Botones -->
+    <div class="d-flex justify-content-between mt-4">
+        <a href="/records/{{ record._id }}/appointments/new" class="btn btn-primary">Añadir Cita</a>
+        <a href="/records" class="btn btn-secondary">Volver a la Lista</a>
+    </div>
+</div>
+{% endblock %}

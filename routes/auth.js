@@ -1,64 +1,63 @@
-const express = require('express');
-const User = require('../models/user'); // Modelo de usuario
-const { generarToken } = require('../models/auth/auth');
-
+import express from 'express';
+import User from '../models/user.js'; // Modelo de usuario (ajusta el nombre si es diferente)
 
 const router = express.Router();
 
-// Ruta para login
+// Renderizar el formulario de login
+router.get('/login', (req, res) => {
+    res.render('login', { error: null });
+});
+
+
+// Procesar el formulario de login
 router.post('/login', async (req, res) => {
     const { login, password } = req.body;
 
-    // Buscar usuario en la base de datos
-    const usuario = await User.findOne({ login, password });
-
-    if (!usuario) {
-        return res.status(401).json({ ok: false, error: 'Login incorrecto' });
-    }
-
-    // Generar y devolver un token
-    const token = generarToken(usuario);
-    res.json({ ok: true, result: token });
-});
-
-// Ruta para registrar un nuevo usuario
-router.post('/signup', async (req, res) => {
-    const { login, password, rol } = req.body;
-
-    // Validación simple
-    if (!login || !password || !rol) {
-        return res.status(400).json({ ok: false, error: 'Todos los campos son obligatorios' });
-    }
-
     try {
-        // Verificar si el usuario ya existe
-        const existeUsuario = await User.findOne({ login });
-        if (existeUsuario) {
-            return res.status(409).json({ ok: false, error: 'El usuario ya existe' });
+        const user = await User.findOne({ login });
+
+        if (!user || user.password !== password) {
+            return res.render('login', { error: 'Credenciales incorrectas' });
         }
 
-        // Crear un nuevo usuario
-        const nuevoUsuario = new User({ login, password, rol });
-        await nuevoUsuario.save();
-        res.status(201).json({ ok: true, result: 'Usuario creado correctamente' });
+        // Guardar datos del usuario en la sesión
+        req.session.user = {
+            id: user._id,
+            login: user.login,
+            rol: user.rol,
+        };
+
+        // Redirigir según el rol del usuario
+        switch (user.rol) {
+            case 'admin':
+                return res.redirect('/records');
+            case 'physio':
+                return res.redirect('/records');
+            case 'patient':
+                return res.redirect(`/patients/${user._id}`);
+            default:
+                req.session.destroy(); // Limpiar la sesión si el rol es desconocido
+                return res.status(403).render('error', { error: 'Rol desconocido' });
+        }
     } catch (error) {
-        res.status(500).json({ ok: false, error: 'Error al registrar el usuario' });
+        console.error('Error durante el login:', error);
+        res.status(500).render('login', { error: 'Error interno del servidor' });
     }
-    //prueba para asegurarse que funciona
-    router.get('/test', (req, res) => {
-        res.json({ message: "Ruta de prueba funcionando correctamente." });
+});
+
+
+// Ruta para logout
+router.get('/logout', (req, res) => {
+    // Destruir la sesión
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error al cerrar la sesión:', err);
+            return res.status(500).render('error', { error: 'No se pudo cerrar la sesión. Intente nuevamente.' });
+        }
+
+        // Redirigir al usuario a la página inicial
+        res.redirect('/');
     });
-    
-    // Ruta para obtener todos los usuarios (solo para admin)
-router.get('/users', async (req, res) => {
-    try {
-        const usuarios = await User.find(); // Buscar todos los usuarios en la base de datos
-        res.json({ ok: true, result: usuarios });
-    } catch (error) {
-        res.status(500).json({ ok: false, error: 'Error al obtener usuarios' });
-    }
 });
 
-});
-
-module.exports = router;
+export default router;

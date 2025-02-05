@@ -1,0 +1,35 @@
+{% extends "base.njk" %}
+
+{% block titulo %}Detalles del Fisioterapeuta{% endblock %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <h1 class="mb-4">Detalles del Fisioterapeuta</h1>
+    
+    <table class="table table-striped table-hover">
+        <tbody>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ physio.name }}</td>
+            </tr>
+            <tr>
+                <th>Apellido</th>
+                <td>{{ physio.surname }}</td>
+            </tr>
+            <tr>
+                <th>Especialidad</th>
+                <td>{{ physio.specialty }}</td>
+            </tr>
+            <tr>
+                <th>Número de Licencia</th>
+                <td>{{ physio.licenseNumber }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between">
+        <a href="/physios" class="btn btn-primary">Volver a la Lista</a>
+        <a href="/physios/{{ physio._id }}/edit" class="btn btn-warning">Editar</a>
+    </div>
+</div>
+{% endblock %}

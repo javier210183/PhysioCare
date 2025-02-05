@@ -1,0 +1,53 @@
+{% extends "base.njk" %}
+
+{% block titulo %}Lista de Expedientes Médicos{% endblock %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <h1 class="mb-4">Lista de Expedientes Médicos</h1>
+
+    <!-- Formulario de búsqueda -->
+    <div class="mb-3">
+        <form action="/records/find" method="get" class="d-flex">
+            <input type="text" name="surname" class="form-control me-2" placeholder="Buscar expedientes por apellido">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+    </div>
+
+    <!-- Tabla de expedientes -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Paciente</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if records.length > 0 %}
+                {% for record in records %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ record.patient.name }} {{ record.patient.surname }}</td>
+                    <td>
+                        <a href="/records/{{ record._id }}" class="btn btn-info btn-sm">Detalles</a>
+                        {% if session.user.rol == 'admin' or session.user.rol == 'physio' %}
+                            <a href="/records/{{ record._id }}/appointments/new" class="btn btn-success btn-sm">Añadir Cita</a>
+                        {% endif %}
+                        {% if session.user.rol == 'admin' %}
+                        <form action="/records/{{ record._id }}?_method=DELETE" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="3" class="text-center">No se encontraron expedientes médicos.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.njk" %}
+
+{% block titulo %}Editar Fisioterapeuta{% endblock %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <h1 class="mb-4">Editar Fisioterapeuta</h1>
+
+    <form action="/physios/{{ physio._id }}?_method=PUT" method="post" class="mt-3">
+        <div class="mb-3">
+            <label for="name" class="form-label">Nombre</label>
+            <input type="text" name="name" id="name" class="form-control" value="{{ physio.name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="surname" class="form-label">Apellido</label>
+            <input type="text" name="surname" id="surname" class="form-control" value="{{ physio.surname }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="specialty" class="form-label">Especialidad</label>
+            <select name="specialty" id="specialty" class="form-control" required>
+                <option value="Sports" {% if physio.specialty == 'Sports' %}selected{% endif %}>Deportiva</option>
+                <option value="Neurological" {% if physio.specialty == 'Neurological' %}selected{% endif %}>Neurológica</option>
+                <option value="Pediatric" {% if physio.specialty == 'Pediatric' %}selected{% endif %}>Pediátrica</option>
+                <option value="Geriatric" {% if physio.specialty == 'Geriatric' %}selected{% endif %}>Geriátrica</option>
+                <option value="Oncological" {% if physio.specialty == 'Oncological' %}selected{% endif %}>Oncológica</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="licenseNumber" class="form-label">Número de Licencia</label>
+            <input type="text" name="licenseNumber" id="licenseNumber" class="form-control" value="{{ physio.licenseNumber }}" required>
+        </div>
+        <button type="submit" class="btn btn-success">Guardar Cambios</button>
+        <a href="/physios/{{ physio._id }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+
+    <!-- Mostrar errores -->
+    {% if errors %}
+    <div class="alert alert-danger mt-3">
+        <ul>
+            {% for error in errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

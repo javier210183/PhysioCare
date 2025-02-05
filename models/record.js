@@ -1,5 +1,4 @@
-// models/record.js
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const appointmentSchema = new mongoose.Schema({
     date: {
@@ -37,7 +36,13 @@ const recordSchema = new mongoose.Schema({
         type: String,
         maxlength: 1000
     },
-    appointments: [appointmentSchema]
+    appointments: [appointmentSchema],
+    notes: [{
+        date: { type: Date, default: Date.now },
+        author: { type: String, required: true },
+        content: { type: String, required: true }
+    }]
 });
 
-module.exports = mongoose.model('Record', recordSchema);
+// Exportar el modelo
+export default mongoose.model('record', recordSchema);

@@ -1,0 +1,110 @@
+<style>
+    .search-container {
+        max-width: 300px; /* Limitar el ancho */
+        margin-bottom: 0; /* Reducir márgenes */
+        text-align: center; /* Centrar los títulos */
+    }
+    .search-container h5 {
+        font-size: 14px; /* Reducir el tamaño del título */
+        margin-bottom: 5px; /* Espaciado entre título y buscador */
+    }
+    .search-container form {
+        display: flex; /* Alinear horizontalmente */
+        justify-content: center; /* Centrar contenido */
+        gap: 5px; /* Espacio entre elementos */
+    }
+    .search-container {
+    max-width: 200px;
+}
+
+    .search-container button {
+        font-size: 12px; /* Reducir tamaño del botón */
+        padding: 2px 8px; /* Ajustar espacio interno del botón */
+    }
+   .d-flex {
+    justify-content: center;
+    gap: 10px; /* Espacio entre elementos */
+}
+
+
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">PhysioCare</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                {% if session.user %}
+                    <li class="nav-item"><a class="nav-link" href="/patients">Pacientes</a></li>
+                    
+                    {% if session.user.rol == 'admin' %}
+                        <li class="nav-item"><a class="nav-link" href="/patients/new">Registrar Paciente</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/physios">Fisioterapeutas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/physios/new">Registrar Fisioterapeuta</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/records/new">Registrar Expediente</a></li>
+                    {% endif %}
+                    
+                    {% if session.user.rol == 'physio' %}
+                        <li class="nav-item"><a class="nav-link" href="/records">Expedientes</a></li>
+                    {% endif %}
+                    
+                    <li class="nav-item"><a class="nav-link" href="/auth/logout">Cerrar Sesión</a></li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="/auth/login">Iniciar Sesión</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Contenedor para los buscadores -->
+{% if session.user %}
+<div class="bg-light py-3">
+    <div class="container d-flex justify-content-between align-items-center">
+        {% if session.user.rol == 'admin' %}
+            <!-- Buscador de fisioterapeutas -->
+            <div class="search-container">
+                <h5>Buscar Fisioterapeutas</h5>
+                <form action="/physios/find" method="get">
+                    <select name="specialty" class="form-control form-control-sm">
+                        <option value="">Especialidad</option>
+                        <option value="Sports">Deportiva</option>
+                        <option value="Neurological">Neurológica</option>
+                        <option value="Pediatric">Pediátrica</option>
+                        <option value="Geriatric">Geriátrica</option>
+                        <option value="Oncological">Oncológica</option>
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-primary">Buscar</button>
+                </form>
+            </div>
+        {% endif %}
+        
+        <!-- Buscador de pacientes -->
+        {% if session.user.rol == 'admin' or session.user.rol == 'physio' %}
+        <div class="search-container">
+            <h5>Buscar Pacientes</h5>
+            <form action="/patients/find" method="get">
+                <input type="text" name="surname" class="form-control form-control-sm" placeholder="Apellido">
+                <button type="submit" class="btn btn-sm btn-primary">Buscar</button>
+            </form>
+        </div>
+        {% endif %}
+
+
+
+        <!-- Buscador de expedientes médicos -->
+        {% if session.user.rol == 'admin' or session.user.rol == 'physio' %}
+        <div class="search-container">
+            <h5>Buscar Expedientes</h5>
+            <form action="/records/find" method="get">
+    <input type="text" name="surname" class="form-control form-control-sm" placeholder="Apellido">
+    <button type="submit" class="btn btn-sm btn-primary">Buscar</button>
+</form>
+
+        </div>
+        {% endif %}
+ 
+
+    </div>
+</div>
+{% endif %}
