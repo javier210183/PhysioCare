@@ -15,6 +15,8 @@ router.post('/login', async (req, res) => {
 
     try {
         const user = await User.findOne({ login });
+        
+        console.log("Usuario encontrado en la BD:", user);
 
         if (!user || user.password !== password) {
             return res.render('login', { error: 'Credenciales incorrectas' });
