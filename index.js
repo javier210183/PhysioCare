@@ -106,10 +106,11 @@ app.use((req, res, next) => {
 
 // Conexión a MongoDB y arranque del servidor
 const PORT = process.env.PORT || 8080;
-mongoose.connect(process.env.DB_URL, {
+mongoose.connect("mongodb://admin:NuevaClaveSegura@mi_mongo:27017/physiocare?authSource=admin", {
     useNewUrlParser: true,
     useUnifiedTopology: true
-})
+});
+
     .then(() => {
         app.listen(PORT, () => {
             console.log(`🚀 Servidor escuchando en http://localhost:${PORT}`);
